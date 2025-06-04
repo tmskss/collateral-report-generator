@@ -1,0 +1,7 @@
+langchain
+langgraph
+pillow
+openai
+python-dotenv
+torch
+transformers
