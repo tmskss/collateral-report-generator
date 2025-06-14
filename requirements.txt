@@ -4,4 +4,3 @@ pillow
 openai
 python-dotenv
 torch
-transformers

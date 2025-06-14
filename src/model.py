@@ -1,18 +1,86 @@
 from openai import OpenAI
-from dotenv import load_dotenv
-
-import os
-
+    
 class LLM:
-    def __init__(self, api_key: str, base_url: str):
-        self.client = OpenAI(
-            base_url="http://mobydick.elte-dh.hu:24642/v1",
-            api_key=os.getenv("NLP_API_KEY")
+    def __init__(self):
+        self.client = OpenAI()
+        
+    def create_file(self, file_path):
+        with open(file_path, "rb") as file_content:
+            result = self.client.files.create(
+                file=file_content,
+                purpose="vision",
+            )
+            return result.id
+        
+    def describe_image(self, img_path: str, additional_info: str | None = None) -> str:
+        file_id = self.create_file(img_path)
+        additional_info_text = 'This is additional information generated from other images of the same object: ' + additional_info if additional_info is not None else ""
+        prompt = f"Describe this image. You are analyzing an image to be included as collateral. Focus on the condition, brand, and specifications of the item. {additional_info_text}"
+
+        response = self.client.responses.create(
+            model="gpt-4.1-mini",
+            input=[{
+                "role": "user",
+                "content": [
+                    {"type": "input_text", "text": prompt},
+                    {
+                        "type": "input_image",
+                        "file_id": file_id,
+                    },
+                ],
+            }],
         )
 
-    def invoke(self, messages: list[dict], stream: bool = False, model: str = "Qwen/Qwen3-32B-AWQ"):
-        return self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            stream=stream
+        return response.output_text
+    
+
+    def create_report(self, user_prompt: str, system_prompt: str, stream: bool = False, model: str = "gpt-4o-mini"):
+        resp = self.client.chat.completions.create(
+            model = model,
+            messages = [
+                {
+                    "role": "system",
+                    "content": system_prompt
+                },
+                {
+                    "role": "user",
+                    "content": user_prompt
+                }
+            ],
+            response_format=
+            {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "report_schema",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "identification": {
+                                "type": "string",
+                                "description": "Identification & general data of the asset"
+                                },
+                            "inspection_methods": {
+                                "type": "string",
+                                "description": "Methods and tools used during inspection"
+                                },
+                            "condition_assessment": {
+                                "type": "string",
+                                "description": "Overall condition assessment of the asset"
+                                },
+                            "documentation_and_accessories": {
+                                "type": "string",
+                                "description": "List of documentation and available accessories"
+                                }
+                        },
+                        "required": [
+                            "identification",
+                            "inspection_methods",
+                            "condition_assessment",
+                            "documentation_and_accessories"
+                        ]
+                    }
+                }
+            },
         )
+
+        return resp.choices[0].message.content
