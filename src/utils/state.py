@@ -1,3 +1,8 @@
+
+"""
+This module defines the state schema which is used in the graph, and the report output schema.
+"""
+
 from typing import TypedDict
 from pydantic import BaseModel, Field
 

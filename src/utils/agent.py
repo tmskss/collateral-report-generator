@@ -8,7 +8,23 @@ from utils.tools import select_relevant_images, analyze_images, ddg_search
 from utils.examples import REPORT_EXAMPLE
 
 class RefiningAgent(Runnable):
+    """
+        An agent that refines reports about collateral objects by analyzing images
+        and gathering additional information.
+        
+        This agent inherits from Runnable and uses LangGraph's ReAct agent pattern
+        to iteratively improve reports by identifying missing information and
+        using tools to fill in the gaps.
+    """
     def system_prompt(self) -> list[AnyMessage]:
+        """
+        Create the system prompt for the refining agent.
+        
+        Returns:
+            list[AnyMessage]: A list containing the system message that instructs
+                             the agent on how to refine reports.
+        """
+
         system_msg = f"""
         You are an assistant who is helping to refine a report about an object used as collateral. You need to identify parts of the report which contain missing or incomplete information and augment it by looking at images of the object. After identifying missing information, you should look for the relevant images and analyze them to find the missing information.
                                                     
@@ -37,6 +53,20 @@ class RefiningAgent(Runnable):
         return [{"role": "system", "content": system_msg}]
 
     def invoke(self, state: ImageProcessingState, config = None) -> ImageProcessingState:
+        """
+            Process the current state and refine the report using a LangGraph ReAct agent.
+            
+            The agent analyzes the current report, identifies missing information,
+            and uses tools to gather additional details from images and web searches.
+            
+            Args:
+                state (ImageProcessingState): The current state containing the report to refine
+                config: Optional configuration for the agent execution
+                
+            Returns:
+                ImageProcessingState: Updated state with the refined report
+        """
+        
         model = ChatOpenAI(model="o3-mini")
         tools = [select_relevant_images, analyze_images, ddg_search]
         model = model.bind_tools(tools)

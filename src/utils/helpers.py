@@ -29,7 +29,19 @@ def load_images(state: ImageProcessingState) -> ImageProcessingState:
     return state
 
 def describe_images(state: ImageProcessingState) -> ImageProcessingState:
-
+    """
+        Extract text descriptions from images using a vision model.
+        
+        This function processes each image in the state, using a vision model to generate
+        textual descriptions. The descriptions are stored in the state's features list.
+        Results are also saved to a YAML file for persistence.
+        
+        Args:
+            state (ImageProcessingState): The current state containing image paths
+        
+        Returns:
+            ImageProcessingState: Updated state with extracted features from images
+    """
     # Create data directory if it doesn't exist
     data_dir = os.path.join(os.getcwd(), "data", "runs")
     os.makedirs(data_dir, exist_ok=True)
@@ -57,6 +69,20 @@ def describe_images(state: ImageProcessingState) -> ImageProcessingState:
     return state
 
 def aggregate_info(state: ImageProcessingState) -> ImageProcessingState:
+    """
+        Aggregate information from all image descriptions into a structured report.
+        
+        This function uses an LLM to analyze all extracted text features and generate
+        a comprehensive report in JSON format. The report is then converted to markdown
+        and stored in the state.
+        
+        Args:
+            state (ImageProcessingState): The current state containing extracted features
+        
+        Returns:
+            ImageProcessingState: Updated state with aggregated information and markdown report
+    """
+
     data_dir = os.path.join(os.getcwd(), "data", "runs")
     os.makedirs(data_dir, exist_ok=True)
     aggreagated_info_path = os.path.join(data_dir, "aggregated_info.json")
@@ -85,6 +111,18 @@ def aggregate_info(state: ImageProcessingState) -> ImageProcessingState:
     return state
 
 def finish_report(state: ImageProcessingState) -> ImageProcessingState:
+    """
+        Finalize and polish the report to make it more professional.
+        
+        This function takes the draft markdown report and uses an LLM to improve
+        its phrasing, formatting, and overall professional tone.
+        
+        Args:
+            state (ImageProcessingState): The current state containing the draft report
+        
+        Returns:
+            ImageProcessingState: Updated state with the finalized professional report
+    """
     llm = LLM()
 
     system_prompt = f"You are a helpful assistant who finishes an almost done report. Your most important task is to rephrase the report to sound more professional, and follow the correct formatting.\n\nExample finished reports:\n{REPORT_EXAMPLE}"
@@ -95,6 +133,18 @@ def finish_report(state: ImageProcessingState) -> ImageProcessingState:
     return state
 
 def json_to_markdown(json_data: str) -> str:
+    """
+        Convert a JSON string to formatted markdown.
+        
+        This function parses a JSON string and converts it to markdown format
+        with section titles and formatted content.
+        
+        Args:
+            json_data (str): JSON string to convert
+        
+        Returns:
+            str: Formatted markdown string
+    """
     data = json.loads(json_data)
     
     markdown = ""
@@ -107,5 +157,17 @@ def json_to_markdown(json_data: str) -> str:
     return markdown
 
 def convert_report(report: ReportSchema) -> str:
+    """
+        Convert a ReportSchema object to a formatted markdown string.
+        
+        This function takes a ReportSchema object and formats it into a
+        structured markdown document with appropriate section headers.
+        
+        Args:
+            report (ReportSchema): Report object to convert
+        
+        Returns:
+            str: Formatted markdown report
+    """
     return f"### Identification & General Data\n{report.identification}\n\n### Inspection Methods\n{report.inspection_methods}\n\n### Condition Assessment\n{report.condition_assessment}\n\n### Documentation & Accessories\n{report.documentation_and_accessories}"
 

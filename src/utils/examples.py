@@ -1,3 +1,7 @@
+"""
+This module contains long strings which are included in certain parts of the codebase.
+"""
+
 REPORT_EXAMPLE = """
 Example 1:
 ### Identification & General Data
