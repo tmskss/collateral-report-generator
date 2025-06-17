@@ -55,24 +55,8 @@ http://localhost:5001
 http://localhost:7860
 ```
 
-4. You can upload images on the frontend and see the generated report at the bottom of the page after the backend is finished (might take a few minutes)
+4. You can upload images on the frontend and see the generated report at the bottom of the page after the backend is finished (might take a few minutes).
 
-## Project Structure
-
-```
-├── src/                        # Source code
-│   ├── temp_uploads/           # Temporary upload directory created by the code
-│   ├── app.py                  # Backend entry point
-│   ├── gradio_interface.py     # Frontend entry point
-│   └── utils/                  # Utility modules
-│       ├── agent.py            # Agent for report refinement
-│       ├── helpers.py          # Helper functions for processing and executing steps
-│       ├── model.py            # LLM wrapper for OpenAI interactions
-│       ├── state.py            # State definitions and schemas
-│       ├── tools.py            # Tools for the agent
-│       └── examples.py         # Example formats and prompts
-└── requirements.txt            # Python dependencies
-```
 
 ## Example Output
 
