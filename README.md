@@ -29,8 +29,8 @@ The application follows a pipeline architecture:
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/tmskss/nlp-homework-raiffeisen.git
-cd nlp-homework-raiffeisen
+git clone https://github.com/tmskss/collateral-report-generator.git
+cd collateral-report-generator
 ```
 
 2. Create a `.env` file based on the `.env.sample` file
