@@ -1,6 +1,6 @@
 from pprint import pprint
 from langgraph.graph import StateGraph, START, END
-from utils.helpers import ImageProcessingState, load_images, describe_images, aggregate_info
+from utils.helpers import ImageProcessingState, load_images, describe_images, aggregate_info, convert_report, finish_report
 from dotenv import load_dotenv
 from utils.agent import RefiningAgent
 
@@ -24,7 +24,8 @@ def create_default_state(images_dir: str) -> ImageProcessingState:
         "image_paths": [],
         "features": [],
         "aggregated_info": "",
-        "final_report_markdown": ""
+        "final_report_markdown": "",
+        "messages": []
     }
 
 def main():
@@ -35,13 +36,15 @@ def main():
     graph_builder.add_node("extract_text_vision_model", describe_images)
     graph_builder.add_node("aggregate_info", aggregate_info)
     graph_builder.add_node("refine_agent", RefiningAgent())
+    graph_builder.add_node("finish_report", finish_report)
     
     # Define the main flow
     graph_builder.add_edge(START, "load_images")
     graph_builder.add_edge("load_images", "extract_text_vision_model")
     graph_builder.add_edge("extract_text_vision_model", "aggregate_info")
     graph_builder.add_edge("aggregate_info", "refine_agent")
-    graph_builder.add_edge("refine_agent", END)
+    graph_builder.add_edge("refine_agent", "finish_report")
+    graph_builder.add_edge("finish_report", END)
     
     
     # Compile the graph
@@ -56,7 +59,7 @@ def main():
     pprint(final_state["final_report_markdown"])
 
     with open("/Users/tmskss/Development/nlp-homework-raiffeisen/data/runs/final_report.md", "w") as f:
-        f.write(final_state["final_report_markdown"])
+        f.write(convert_report(final_state["final_report_markdown"]))
 
 
 if __name__ == "__main__":

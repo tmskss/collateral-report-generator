@@ -1,7 +1,9 @@
 langchain
 langchain_openai
+langchain_community
 langgraph
 pillow
 openai
 python-dotenv
-torch
+duckduckgo-search
+flask

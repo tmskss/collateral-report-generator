@@ -1,9 +1,8 @@
 from langchain.tools import tool
 from model import LLM
 from typing import List, Dict
-
-from typing import List, Dict
 from langchain.tools import tool
+from langchain_community.tools import DuckDuckGoSearchRun
 
 import yaml
 
@@ -78,5 +77,23 @@ def analyze_images(image_paths: List[str], information: str) -> str:
 
     result = llm.invoke(user_prompt, system_prompt)
     print(f"[DEBUG] Result of analyze_images for information '{information}': {result}")
+    return result
+
+@tool(parse_docstring=True)
+def ddg_search(query: str) -> str:
+    """
+    Searches the DuckDuckGo search engine for the query. Useful for looking for information on the internet.
+    
+    Args:
+        query: The query to search for.
+    
+    Returns:
+        A string containing the search results.
+    """
+    search = DuckDuckGoSearchRun()
+    result = search.invoke(query)
+
+    print(f"[DEBUG] Result of ddg_search for query '{query}': {result}")
+
     return result
 

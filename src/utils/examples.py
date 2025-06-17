@@ -95,3 +95,38 @@ Example 2:
 - **Valuation Report Attachments:** Full report, appendices, and limiting conditions form the complete opinion.
 - **Note:** No investigation of legal title or encumbrances was performed; values are for the stated purpose only.
 """
+
+
+OUTPUT_FORMAT = {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "report_schema",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "identification": {
+                                "type": "string",
+                                "description": "Identification & general data of the asset"
+                                },
+                            "inspection_methods": {
+                                "type": "string",
+                                "description": "Methods and tools used during inspection"
+                                },
+                            "condition_assessment": {
+                                "type": "string",
+                                "description": "Overall condition assessment of the asset"
+                                },
+                            "documentation_and_accessories": {
+                                "type": "string",
+                                "description": "List of documentation and available accessories"
+                                }
+                        },
+                        "required": [
+                            "identification",
+                            "inspection_methods",
+                            "condition_assessment",
+                            "documentation_and_accessories"
+                        ]
+                    }
+                }
+            }

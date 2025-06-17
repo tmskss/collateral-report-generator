@@ -1,4 +1,5 @@
 from openai import OpenAI
+from utils.examples import OUTPUT_FORMAT
     
 class LLM:
     def __init__(self):
@@ -31,7 +32,7 @@ class LLM:
         
     def describe_image(self, img_path: str, additional_info: str | None = None, model: str = "gpt-4.1-mini") -> str:
         file_id = self.create_file(img_path)
-        additional_info_text = 'This is additional information generated from other images of the same object: ' + additional_info if additional_info is not "" else ""
+        additional_info_text = 'This is additional information generated from other images of the same object: ' + additional_info + '\nOnly include the new information in the description, and not the information from the previous images.' if additional_info != "" else ""
         prompt = f"Describe this image. You are analyzing an image to be included as collateral. Focus on the condition, brand, and specifications of the item. {additional_info_text}"
 
         response = self.client.responses.create(
@@ -53,7 +54,7 @@ class LLM:
     def find_information(self, img_path: str, information: str, additional_info: str | None = None, model: str = "gpt-4.1-mini") -> str:
         file_id = self.create_file(img_path)
 
-        additional_info_text = 'This is additional description generated from other images related to the same information: ' + additional_info + "\nYou can disregard this if it is not relevant, or doesn't contain the information you need." if additional_info is not "" else ""
+        additional_info_text = 'This is additional description generated from other images related to the same information: ' + additional_info + "\nYou can disregard this if it is not relevant, or doesn't contain the information you need." if additional_info != "" else ""
         prompt = f"Describe this image. You are analyzing an image to be included as collateral. You need to find this information in the image: {information}\n\n{additional_info_text}"
 
         response = self.client.responses.create(
@@ -86,40 +87,7 @@ class LLM:
                     "content": user_prompt
                 }
             ],
-            response_format=
-            {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": "report_schema",
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "identification": {
-                                "type": "string",
-                                "description": "Identification & general data of the asset"
-                                },
-                            "inspection_methods": {
-                                "type": "string",
-                                "description": "Methods and tools used during inspection"
-                                },
-                            "condition_assessment": {
-                                "type": "string",
-                                "description": "Overall condition assessment of the asset"
-                                },
-                            "documentation_and_accessories": {
-                                "type": "string",
-                                "description": "List of documentation and available accessories"
-                                }
-                        },
-                        "required": [
-                            "identification",
-                            "inspection_methods",
-                            "condition_assessment",
-                            "documentation_and_accessories"
-                        ]
-                    }
-                }
-            },
+            response_format=OUTPUT_FORMAT,
         )
 
         return resp.choices[0].message.content
