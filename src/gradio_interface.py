@@ -41,7 +41,7 @@ def process_images(images):
         
         # Send the directory path to your Flask endpoint
         response = requests.post(
-            "http://127.0.0.1:5001/process_images",
+            "http://backend:5001/process_images",
             json={"images_dir": temp_dir}
         )
         
@@ -83,4 +83,4 @@ with gr.Blocks() as demo:
     submit_btn.click(fn=process_images, inputs=[image_input], outputs=[output])
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(server_name="0.0.0.0", server_port=7860)

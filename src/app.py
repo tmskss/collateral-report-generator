@@ -68,11 +68,8 @@ def process_images():
     print("Final report:")
     pprint(final_state["final_report_markdown"])
 
-    with open("/Users/tmskss/Development/nlp-homework-raiffeisen/data/runs/final_report.md", "w") as f:
-        f.write(final_state["final_report_markdown"])
-
     return jsonify({"report": final_state["final_report_markdown"]}), 200
 
 
 if __name__ == '__main__':
-    app.run(port=5001,debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)

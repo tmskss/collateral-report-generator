@@ -29,6 +29,18 @@ def load_images(state: ImageProcessingState) -> ImageProcessingState:
     return state
 
 def describe_images(state: ImageProcessingState) -> ImageProcessingState:
+
+    # Create data directory if it doesn't exist
+    data_dir = os.path.join(os.getcwd(), "data", "runs")
+    os.makedirs(data_dir, exist_ok=True)
+    features_path = os.path.join(data_dir, "features.yaml")
+
+    # Uncomment this to start from a saved state
+    # features_path = os.path.join(data_dir, "features.yaml")
+    # with open(features_path, "r") as f:
+    #     state["features"] = yaml.safe_load(f)
+    # return state
+
     vision_model = LLM()
 
     for img_path in state["image_paths"]:
@@ -39,15 +51,17 @@ def describe_images(state: ImageProcessingState) -> ImageProcessingState:
 
     print(f"Extracted text from {len(state['image_paths'])} images.")
 
-    with open("/Users/tmskss/Development/nlp-homework-raiffeisen/data/runs/features.yaml", "w") as f:
+    with open(features_path, "w") as f:
         yaml.dump(state["features"], f)
+    
     return state
-    # with open("/Users/tmskss/Development/nlp-homework-raiffeisen/data/runs/features.yaml", "r") as f:
-    #     state["features"] = yaml.safe_load(f)
-
-    # return state
 
 def aggregate_info(state: ImageProcessingState) -> ImageProcessingState:
+    data_dir = os.path.join(os.getcwd(), "data", "runs")
+    os.makedirs(data_dir, exist_ok=True)
+    aggreagated_info_path = os.path.join(data_dir, "aggregated_info.json")
+
+
     llm = LLM()
     system_prompt = """
     You are a helpful assistant who receives descriptions of multiple images of one object used as collateral and creates a report from it. A lot of images can focus on a certain part of an object, for example the tire of a car. Always focus on the object as a whole and not on a specific part in the report.
@@ -60,10 +74,11 @@ def aggregate_info(state: ImageProcessingState) -> ImageProcessingState:
     state["aggregated_info"] = llm.create_report(user_prompt, system_prompt, model="o4-mini")
 
     # Saving json for debug purposes
-    with open("/Users/tmskss/Development/nlp-homework-raiffeisen/data/runs/aggregated_info.json", "w") as f:
+    with open(aggreagated_info_path, "w") as f:
         json.dump(state["aggregated_info"], f, indent=4)
 
-    # with open("/Users/tmskss/Development/nlp-homework-raiffeisen/data/runs/aggregated_info.json", "r") as f:
+    # Uncomment this to start from a saved state
+    # with open(aggreagated_info_path, "r") as f:
     #     state["aggregated_info"] = json.load(f)
 
     state["final_report_markdown"] = json_to_markdown(state["aggregated_info"])

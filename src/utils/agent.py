@@ -41,7 +41,7 @@ class RefiningAgent(Runnable):
         tools = [select_relevant_images, analyze_images, ddg_search]
         model = model.bind_tools(tools)
         # Create the langgraph react agent
-        agent = create_react_agent(model=model, tools=tools, response_format=ReportSchema)
+        agent = create_react_agent(model=model, tools=tools, response_format=ReportSchema, debug=True)
         
         report = state["final_report_markdown"]
         

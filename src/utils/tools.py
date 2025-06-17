@@ -5,6 +5,7 @@ from langchain.tools import tool
 from langchain_community.tools import DuckDuckGoSearchRun
 
 import yaml
+import os
 
 @tool(parse_docstring=True)
 def select_relevant_images(missing_info_summary: str) -> List[str]:
@@ -19,7 +20,10 @@ def select_relevant_images(missing_info_summary: str) -> List[str]:
     """
     llm = LLM()
 
-    with open("../data/runs/features.yaml", "r") as f:
+    data_dir = os.path.join(os.getcwd(), "data", "runs")
+    os.makedirs(data_dir, exist_ok=True)
+    features_path = os.path.join(data_dir, "features.yaml")
+    with open(features_path, "r") as f:
         features: List[Dict[str, str]] = yaml.safe_load(f)
         descriptions_formatted = "\n\n".join(feature["image_path"] + ":\n" + feature["extracted_text"] for feature in features)
 
