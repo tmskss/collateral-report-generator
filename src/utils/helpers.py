@@ -1,5 +1,5 @@
 from PIL import Image
-from model import LLM
+from utils.model import LLM
 from utils.examples import REPORT_EXAMPLE
 from utils.state import ImageProcessingState, ReportSchema
 

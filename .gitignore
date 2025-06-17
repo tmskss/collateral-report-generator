@@ -1,6 +1,9 @@
 # MacOS
 *.DS_Store
 
+# Gradio
+.gradio
+
 # Data files
 data/
 

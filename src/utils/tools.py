@@ -1,5 +1,5 @@
 from langchain.tools import tool
-from model import LLM
+from utils.model import LLM
 from typing import List, Dict
 from langchain.tools import tool
 from langchain_community.tools import DuckDuckGoSearchRun

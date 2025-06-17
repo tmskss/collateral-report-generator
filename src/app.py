@@ -1,11 +1,15 @@
 from pprint import pprint
 from langgraph.graph import StateGraph, START, END
-from utils.helpers import ImageProcessingState, load_images, describe_images, aggregate_info, convert_report, finish_report
+from utils.helpers import ImageProcessingState, load_images, describe_images, aggregate_info, finish_report
 from dotenv import load_dotenv
 from utils.agent import RefiningAgent
 
 import os
+from flask import Flask, request, jsonify
 
+app = Flask(__name__)
+
+load_dotenv()
 
 def create_default_state(images_dir: str) -> ImageProcessingState:
     """
@@ -28,7 +32,14 @@ def create_default_state(images_dir: str) -> ImageProcessingState:
         "messages": []
     }
 
-def main():
+@app.route("/process_images", methods=["POST"])
+def process_images():
+    data = request.json
+    images_dir = data.get("images_dir")
+
+    if not images_dir or not os.path.exists(images_dir):
+        return jsonify({"error": "Invalid image directory"}), 400
+
     graph_builder = StateGraph(ImageProcessingState)
 
     # Define the basic data processing nodes
@@ -48,20 +59,20 @@ def main():
     
     
     # Compile the graph
-    app = graph_builder.compile()
-    
-    images_dir = os.getenv("IMAGES_DIR")
+    graph = graph_builder.compile()
+
     state = create_default_state(images_dir)
     
-    final_state = app.invoke(state)
+    final_state = graph.invoke(state)
 
     print("Final report:")
     pprint(final_state["final_report_markdown"])
 
     with open("/Users/tmskss/Development/nlp-homework-raiffeisen/data/runs/final_report.md", "w") as f:
-        f.write(convert_report(final_state["final_report_markdown"]))
+        f.write(final_state["final_report_markdown"])
+
+    return jsonify({"report": final_state["final_report_markdown"]}), 200
 
 
-if __name__ == "__main__":
-    load_dotenv()
-    main()
+if __name__ == '__main__':
+    app.run(port=5001,debug=True)

@@ -1,12 +1,11 @@
 from pprint import pprint
-from langchain_core.runnables import Runnable, RunnableConfig
+from langchain_core.runnables import Runnable
 from langchain_core.messages import AnyMessage
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 from utils.state import ImageProcessingState, ReportSchema
 from utils.tools import select_relevant_images, analyze_images, ddg_search
-from utils.examples import REPORT_EXAMPLE, OUTPUT_FORMAT
-from pydantic import BaseModel, Field
+from utils.examples import REPORT_EXAMPLE
 
 class RefiningAgent(Runnable):
     def system_prompt(self) -> list[AnyMessage]:
